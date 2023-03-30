@@ -5,6 +5,31 @@ import medmnist
 from medmnist import INFO, Evaluator
 
 def get_mnist_dataset(batch_size=10, data_flag = 'pathmnist'):
+    """
+    Returns dataloaders for the MedMNIST dataset specified by `data_flag`.
+    Data is normalized and returned in batches.
+
+    Parameters
+    ----------
+    batch_size : int, optional
+        The batch size for the dataloader. Default is 10.
+    data_flag : str, optional
+        The name of the MedMNIST dataset to use. Default is 'pathmnist'.
+
+    Returns
+    -------
+    train_loader : torch.utils.data.DataLoader
+        A dataloader containing training data.
+    eval_loader : torch.utils.data.DataLoader
+        A dataloader containing validation data.
+    test_loader : torch.utils.data.DataLoader
+        A dataloader containing testing data.
+
+    Raises
+    ------
+    ValueError
+        If `data_flag` is not a valid MedMNIST dataset.
+    """
     import medmnist
     from medmnist import INFO, Evaluator
     print(medmnist.__version__)

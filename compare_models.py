@@ -1,6 +1,18 @@
 import torch
 import torch.nn as nn
 def compare_models_acc_over_epoch(train_dataloader, eval_dataloader, test_dataloader, *models: nn.Module) -> None:
+    """
+    Compare the train and eval accuracy over epochs for multiple PyTorch models.
+
+    Args:
+    - train_dataloader: PyTorch DataLoader for training dataset
+    - eval_dataloader: PyTorch DataLoader for validation dataset
+    - test_dataloader: PyTorch DataLoader for testing dataset
+    - *models: one or more PyTorch models to compare
+
+    Returns: None
+
+    """
     from handle_model import handle_model
     acc_list_per_noise_level = []
     model_handlers = []
@@ -45,6 +57,18 @@ def compare_models_acc_over_epoch(train_dataloader, eval_dataloader, test_datalo
 
 
 def plot_acc_df(df, model_names, path_save, titel):
+    """
+    Plot the accuracy comparison chart for PyTorch models.
+
+    Args:
+    - df: Pandas dataframe containing accuracy values
+    - model_names: list of model names
+    - path_save: path to save the plot
+    - titel: plot title
+
+    Returns: None
+
+    """
     df.columns = model_names
     import seaborn as sns
     import matplotlib.pyplot as plt
@@ -73,6 +97,18 @@ def plot_acc_df(df, model_names, path_save, titel):
     plt.close()
 
 def plot_loss_df(df, model_names, path_save, titel):
+    """
+    Plot the loss comparison chart for PyTorch models.
+
+    Args:
+    - df: Pandas dataframe containing loss values
+    - model_names: list of model names
+    - path_save: path to save the plot
+    - titel: plot title
+
+    Returns: None
+
+    """
     df.columns = model_names
     import seaborn as sns
     import matplotlib.pyplot as plt

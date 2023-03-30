@@ -8,20 +8,26 @@ class handle_model():
     A class for handling PyTorch model training and testing on provided datasets.
 
     Args:
+    -----------
     model: A PyTorch model object to train and test.
     train_dataloader: A PyTorch DataLoader object containing training data.
     test_dataloader: A PyTorch DataLoader object containing testing data.
 
     Attributes:
+    -----------
     model: A PyTorch model object to train and test.
     train_dataloader: A PyTorch DataLoader object containing training data.
     test_dataloader: A PyTorch DataLoader object containing testing data.
     epochs: An integer representing the number of epochs to train the model.
 
     Methods:
+    -----------
     run(): Runs the model training and testing on provided datasets.
     train(dataloader, model, loss_fn, optimizer, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')): Trains the model on the provided training dataset.
     test(dataloader, model, loss_fn, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')): Tests the trained model on the provided testing dataset.
+    evaluate(dataloader, model, loss_fn, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')): Evaluates the trained model on the provided validation dataset.
+    plot_training_acc(): Plots the training accuracy of the model with respect to the number of epochs.
+
     """
     def __init__(self, model, train_dataloader, eval_dataloader, test_dataloader):
         self.train_dataloader = train_dataloader
@@ -80,11 +86,7 @@ class handle_model():
         Trains the provided PyTorch model on the provided training dataset.
 
         Args:
-        dataloader: A PyTorch DataLoader object containing training data.
-        model: A PyTorch model object to train.
-        loss_fn: A PyTorch loss function.
-        optimizer: A PyTorch optimizer.
-        device: A string representing the device on which the training should be performed.
+        dataloader (DataLoader): A PyTorch DataLoader object containing training data.
 
         Returns:
         None
@@ -139,6 +141,15 @@ class handle_model():
         self.avg_train_loss_with_epoch.append([self.epoch, check_train_loss])
 
     def evaluate(self, dataloader):
+        """
+        Evaluates the provided PyTorch model on the provided validation dataset.
+
+        Args:
+        dataloader: A PyTorch DataLoader object containing validation data.
+
+        Returns:
+        None
+        """
         size = len(dataloader.dataset)
         num_batches = len(dataloader)
         self.model.eval()
@@ -161,20 +172,12 @@ class handle_model():
 
     def test(self, dataloader):
         """
-        Computes the accuracy and average loss of the model on a test dataset.
-        Parameters:
-        -----------
-        dataloader : torch.utils.data.DataLoader
-            A DataLoader for the test dataset.
-        model : torch.nn.Module
-            The trained model.
-        loss_fn : torch.nn.Module
-            The loss function for the model.
-        device : str or torch.device, optional (default: 'cuda' if available, else 'cpu')
-            The device on which to run the model.
+        Tests the trained model on the provided test dataset.
+
+        Args:
+        dataloader: A PyTorch DataLoader object containing test data.
 
         Returns:
-        --------
         None
         """
         size = len(dataloader.dataset)
@@ -198,6 +201,17 @@ class handle_model():
         self.final_avg_test_loss_with_epoch.append([self.epoch, self.test_loss])
 
     def plot_training_acc(self, save_string="training_acc_plot.png"):
+        """
+        This method plots a line graph of the accuracy of the neural network during training over epochs and saves it to a file. The graph shows the accuracy of the network at each epoch, using the evaluation accuracy data stored in the instance variable 'eval_acc_with_epoch'. The x-axis represents the epoch number and the y-axis represents the accuracy in percentage.
+
+        Parameters:
+
+        save_string (string): The filename to save the plot as. Default is "training_acc_plot.png".
+        Returns:
+
+        None. The plot is saved as a file.
+        """
+
         import pandas as pd
         import seaborn as sns
         import matplotlib.pyplot as plt
