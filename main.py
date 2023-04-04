@@ -21,7 +21,8 @@ if __name__ == '__main__':
     from handle_data import get_mnist_dataset
     train_loader, eval_loader, test_loader = get_mnist_dataset(batch_size=128, data_flag="dermamnist")
 
-    from compare_models import compare_models_acc_over_epoch
-    compare_models_acc_over_epoch(train_loader, eval_loader, test_loader, resnet18, resnet34, sparseresnet34)
+    from compare_models import compare_models_acc_over_epoch, compare_models_robustness
+    # compare_models_acc_over_epoch(train_loader, eval_loader, test_loader, resnet18, resnet34, sparseresnet34)
+    compare_models_robustness(train_loader, eval_loader, test_loader, resnet18, resnet34, sparseresnet34)
 
 

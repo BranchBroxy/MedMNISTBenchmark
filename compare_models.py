@@ -134,3 +134,68 @@ def plot_loss_df(df, model_names, path_save, titel):
     plt.savefig(path_save)
     plt.close()
 
+def compare_models_robustness(train_dataloader, eval_dataloader, test_dataloader, *models: nn.Module, epochs=100 ,noise_levels=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]) -> None:
+    from handle_model import handle_model
+    from utilities_functions import add_noise_to_mnist_dataset
+    acc_list_per_noise_level = []
+    # noise_levels = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    for noise_level in noise_levels:
+        print(noise_level)
+        noisy_train_dataset = add_noise_to_mnist_dataset(train_dataloader.dataset, noise_level=noise_level)
+        noisy_train_loader = torch.utils.data.DataLoader(dataset=noisy_train_dataset, batch_size=10, shuffle=False)
+
+        noisy_test_dataset = add_noise_to_mnist_dataset(test_dataloader.dataset, noise_level=noise_level)
+        noisy_test_loader = torch.utils.data.DataLoader(dataset=noisy_test_dataset, batch_size=10, shuffle=False)
+
+        noisy_eval_dataset = add_noise_to_mnist_dataset(eval_dataloader.dataset, noise_level=noise_level)
+        noisy_eval_loader = torch.utils.data.DataLoader(dataset=noisy_eval_dataset, batch_size=10, shuffle=False)
+
+        model_handlers = []
+        model_names = ["Noise Level"]
+        for model in models:
+            model_handlers.append(handle_model(model, noisy_train_loader, noisy_eval_loader, noisy_test_loader))
+            model_names.append(model.__class__.__name__)
+            #models[0].__class__.__name__
+        acc_list = []
+        for model_runner in model_handlers:
+            model_runner.run(epochs=epochs, learning_rate=0.001)
+            acc_list.append(model_runner.train_acc_with_epoch[-1][-1])
+
+        list_to_append = []
+        list_to_append.append(noise_level)
+        for acc in acc_list:
+            list_to_append.append(acc)
+
+        acc_list_per_noise_level.append(list_to_append)
+
+    import pandas as pd
+    df = pd.DataFrame(acc_list_per_noise_level)
+
+    df.columns = model_names
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker as ticker
+
+    figure, axes = plt.subplots()
+    axes.xaxis.set_major_locator(ticker.MultipleLocator(0.1))
+    plt.grid()
+    axes.xaxis.set_major_formatter(ticker.ScalarFormatter())
+    plt.ylabel("Accuracy in %")
+    plt.xlabel("Noise Level")
+    plt.title("Accuracy comparison of NN with MNIST")
+        # df = pd.DataFrame(data=acc_list, columns=["Epoch", "Accuracy"])
+
+    for index, row in df.iterrows():
+        print(row)
+    for i in range(df.shape[1]-1):
+        sns.lineplot(data=df, x=df.iloc[:, 0], y=df.iloc[:, i+1], ax=axes, label=df.columns[i+1], marker="*",
+                     markersize=8)
+
+    plt.legend(loc='lower right')
+        # axes.legend(labels=["Acc1", "Acc2"])
+    plt.savefig("Compare_noise_mnist.png")
+    plt.close()
+
+    print(acc_list_per_noise_level)
+
+
